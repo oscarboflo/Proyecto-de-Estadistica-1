@@ -1,0 +1,806 @@
+---
+title: "Informe del Proyecto de Estadística 1"
+author: "Oscar Bolaños Flores"
+date: "2023-03-21"
+output: html_document
+---
+
+## Introducción al tema del Proyecto
+
+Se ha escogido este tema en particular ya que nos parece interesante e incluso similar a nuestra situación actual como estudiantes mismos ya que mide el desempeño de los estudiantes con respecto a las notas de los exámenes, de cierta forma se ha recopilado las notas de los estudiantes conforme se va detallando las categorías que existen dentro de nuestra base de datos. Como grupo en general nos ha parecido un buen dataset por lo que nos decidimos a emplear todo lo pedido en el proyecto con este tema e interpretar todos los datos proveídos correctamente
+
+## Descripción de la base de datos del Proyecto
+
+Nuestra base de datos consta de 7 variables en total, donde 5 de ellas son variables cualitativas y 3 de ellas son variables cuantitativas, a continuación, daremos una explicación detallada de cada una de ellas:
+
+### Variables Cualitativas
+
+**Géneros: ** Se ha organizado la base de datos de las notas de nuestros estudiantes con respecto a 2 géneros
+
+* Masculino
+
+* Femenino
+
+**Raza/Etnia: ** Están divididas en 4 grupos en total, se ha denotado la raza/etnia de esta forma para no hacer ningún tipo de distinción de una raza o etnia con la otra
+
+* Grupo A
+* Grupo B
+* Grupo C
+
+* Grupo D
+
+**Nivel de Educación de los Padres: ** Se han dividido por 6 niveles de educación con respecto a los padres de los estudiantes:
+
+* Licenciatura
+* Alguna Educación Superior
+* Maestría
+* Título de Asociado
+
+* Escuela Secundaria
+
+* Algún Bachillerato
+
+**Pago del Lunch: ** En esta variable se basa en el precio del lunch que paga el estudiante, se ha dividido en 2 datos, el primero donde el estudiante paga de forma normal o Estándar como se describe en la data y la segunda con un descuento o de forma gratuita.
+
+* Estándar
+
+* Gratis/descuento
+
+**Curso de Preparación para los Exámenes: ** Los estudiantes se han inscrito en un curso de preparación para sus exámenes y existen 2 “estados” acerca del curso de preparación:
+
+* Completado
+
+* No completado
+
+### Variables Cuantitativas
+
+**Notas de Matemáticas:** Esta variable es de carácter numérica por lo que se le han dado valores de 1 a 100 con respecto a la calificación de cada estudiante de la materia de Matemáticas
+
+**Notas de Lectura:** Esta variable es de carácter numérica por lo que se le han dado valores de 1 a 100 con respecto a la calificación de cada estudiante de la materia de Lectura
+
+**Notas de Escritura:** Esta variable es de carácter numérica por lo que se le han dado valores de 1 a 100 con respecto a la calificación de cada estudiante de la materia de Escritura
+
+## Análisis Univariado de las variables cualitativas
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(readr) #Se importa la librería anteriormente instalada
+
+
+#Lectura de Data------
+
+#Se importan los datos del CSV
+StudentsPerformance <- read_csv("~/ESPOL/3ER/Estadística 1/Proyecto Final/Data/StudentsPerformance.csv")
+```
+
+### Variable cualitativa “Estudiantes por Nivel de Educación Parental”
+
+### Frecuencias absolutas
+
+```{r}
+library(knitr)
+tfrecuencia_nivelparental <- table(StudentsPerformance$`parental level of education`)
+kable(tfrecuencia_nivelparental, caption = "Tabla de Frecuencia de los Estudiantes según nivel de educacion parental",col.names = c("Nivel de Educación Parental", "Frecuencia"),
+      digits = 1, format.args=list(decimal.mark=","))
+```
+
+### Diagrama de Barras
+
+```{r, message=FALSE}
+library(tidyverse)
+
+ggplot(StudentsPerformance, aes(x=`parental level of education`, fill=`parental level of education`)) +  geom_bar( ) +  scale_fill_brewer(palette = "Set1") +
+  theme(legend.position="right")
+```
+
+En el gráfico se puede observar las frecuencias absolutas de la variable Estudiante por Nivel de Educación Parental. El associate´s degree contiene a 222 estudiantes, el bachelor´s degree representa a 118 estudiantes, el high school representa a 196 estudiantes, el master´s degree representa a 59 estudiantes, some college representa a 226 estudiantes y por último some high school represente a 179 estudiantes; es decir que la mayor cantidad de datos recogidos fueron de some college y la menor cantidad la tiene master´s degree.
+
+### Gráfico pastel
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+
+porcentaje_parental <- StudentsPerformance %>% #Se usa esta variable para sacar los porcentajes
+  group_by(`parental level of education`) %>% 
+  count() %>% 
+  ungroup() %>% 
+  mutate(porcentaje = `n`/sum(`n`)*100)
+#Se usa ggplot para el grafico pastel
+ggplot(data = porcentaje_parental,
+       aes(x = 1, y = porcentaje, fill = `parental level of education`))+
+  geom_bar(stat = "identity")+
+  geom_text(aes(label = paste0(round(porcentaje,1),"%")),
+            position = position_stack(vjust = .5))+
+  coord_polar(theta = "y")+
+  theme_void()+
+  labs(title = "Porcentaje según el Nivel De Eduacion Parental")+
+  theme(plot.title = element_text(hjust = 0.5 ))
+```
+
+### Variable cualitativa “Estudiantes según su Lunch”
+
+### Frecuencias absolutas
+
+```{r}
+library(knitr)
+tfrecuencia_lunch <- table(StudentsPerformance$lunch)
+kable(tfrecuencia_lunch, caption = "Tabla de Frecuencia de los estudiantes según su lunch",col.names = c("Estudiantes según su Lunch", "Frecuencia"),
+      digits = 1, format.args=list(decimal.mark=","))
+```
+
+Como se puede observar esta ilustración representa la distribución de los estudiantes según su lunch, se tiene que: 355 estudiantes tienen un lunch “free/reduced”, y por otro lado 645 estudiantes tiene un lunch “standard”.
+
+
+### Diagrama de Barras
+
+```{r, message=FALSE}
+library(tidyverse)
+
+ggplot(StudentsPerformance, aes(x=lunch, fill=lunch)) +  geom_bar( ) +  scale_fill_brewer(palette = "Set1") +
+  theme(legend.position="right")
+```
+
+### Gráfico Pastel
+
+
+```{r, warning=FALSE, message=FALSE}
+#COLUMNA DEL LUNCH
+#Porcentaje de participación
+porcentaje_lunch <- StudentsPerformance %>% #Se usa esta variable para sacar los porcentajes
+  group_by(lunch) %>% 
+  count() %>% 
+  ungroup() %>% 
+  mutate(porcentaje = `n`/sum(`n`)*100)
+#Se usa ggplot para el grafico pastel
+ggplot(data = porcentaje_lunch,
+       aes(x = 1, y = porcentaje, fill =lunch))+
+  geom_bar(stat = "identity")+
+  geom_text(aes(label = paste0(round(porcentaje,1),"%")),
+            position = position_stack(vjust = .5))+
+  coord_polar(theta = "y")+
+  theme_void()+
+  labs(title = "Porcentaje según el Lunch")
+```
+
+En este gráfico se puede observar una comparación porcentual entre las variables “free/reduced” y “standard”, podemos concluir que el tipo de lunch “standard” es mayormente consumido por los estudiantes (64,5%) que el tipo de lunch “free/reduced (35,5%) ”.
+
+### Variable cualitativa “Estudiantes según su Raza o Etnia”.
+
+### Frecuencias absolutas
+
+```{r}
+tfrecuencia_raza <- table(StudentsPerformance$`race/ethnicity`)
+kable(tfrecuencia_raza, caption = "Tabla de Frecuencia de los estudiantes según su etnia/raza",col.names = c("Estudiantes según su etnia/raza", "Frecuencia"),
+      digits = 1, format.args=list(decimal.mark=","))
+```
+
+### Diagrama de Barras
+
+```{r}
+ggplot(StudentsPerformance, aes(x=`race/ethnicity`, fill=`race/ethnicity`)) +  geom_bar( ) +  scale_fill_brewer(palette = "Set3") +
+  theme(legend.position="right")
+```
+
+En la ilustración de diagrama de barras de la variable Estudiantes según su Etnia o Raza, se pueda observar que: “Group A” representa a 89 estudiantes, “Group B” representa a 190 estudiantes, “Group C” representa a 319 estudiantes, “Group D” representa a 262 estudiantes, “Group E” representa a 140 estudiantes; se deduce que “Group C” predomina sobre todas las variables.
+
+### Gráfico Pastel
+
+```{r}
+#Columna Raza/Etnia
+#Porcentaje de Participacion
+porcentaje_raza2 <-  StudentsPerformance %>% 
+  group_by(`race/ethnicity`) %>% 
+  summarise(Frec = n()) %>% 
+  mutate(FrecRel = Frec*100/sum(Frec))
+#Se usa ggplot para el grafico pastel
+porcentaje_raza2 %>% 
+  ggplot(aes(x='',y=FrecRel, fill= `race/ethnicity`))+
+  geom_bar(stat='identity')+
+  geom_text(aes(label = paste0(round(FrecRel,1),"%")),
+            position = position_stack(vjust = .5))+
+  coord_polar('y',start=0)+
+  theme_void()+
+  labs(title = "Porcentaje según la Raza/Etnia")+
+  theme(plot.title = element_text(hjust = 0.5 ))
+```
+
+Este Diagrama de pastel nos ofrece una visualización general de las cinco variables en donde se puede determinar que: donde hay una cantidad de estudiantes media es en “Group B” (19%) , por otro lado, se tiene a “Group D” que es la antepenúltima variable con más estudiantes (26,2%) de alguna raza o etnia, y le sigue “Group C” (31,9%) con la mayor cantidad de estudiantes de alguna raza o etnia dentro de ella y por último “Group A” y “Group E” (8,9% y 14% respectivamente) son las variables con menos estudiantes o bien se tomaron pocos datos de estos grupos.
+
+### Variable cualitativa “Estudiantes según su Género”.
+
+### Frencuencias absolutas
+
+```{r}
+tfrecuencia_genero <- table(StudentsPerformance$gender)
+kable(tfrecuencia_genero, caption = "Tabla de Frecuencia de los estudiantes según su género",col.names = c("Estudiantes según su género", "Frecuencia"),
+      digits = 1, format.args=list(decimal.mark=","))
+```
+
+### Diagrama de Barras
+
+```{r}
+ggplot(StudentsPerformance, aes(x=gender, fill=gender)) +  geom_bar( ) +  scale_fill_brewer(palette = "Set3") +
+  theme(legend.position="right")
+```
+
+Esta ilustración representa la distribución de los estudiantes con su respectivo género además se observa que: el género “Femenino” está contenido por 518 estudiantes y por otro lado el género “masculino” está contenido por 482 estudiantes
+
+### Gráfico pastel
+
+```{r}
+#COLUMNA Genero
+#Porcentaje de participación
+porcentaje_genero <- StudentsPerformance %>% #Se usa esta variable para sacar los porcentajes
+  group_by(gender) %>% 
+  count() %>% 
+  ungroup() %>% 
+  mutate(porcentaje = `n`/sum(`n`)*100)
+#Se usa ggplot para el grafico pastel
+ggplot(data = porcentaje_genero,
+       aes(x = 1, y = porcentaje, fill = gender))+
+  geom_bar(stat = "identity")+
+  geom_text(aes(label = paste0(round(porcentaje,1),"%")),
+            position = position_stack(vjust = .5))+
+  coord_polar(theta = "y")+
+  theme_void()+
+  labs(title = "Porcentaje según el Género")+
+  theme(plot.title = element_text(hjust = 0.5 ))
+```
+
+### Variable cualitativa “Estudiantes según su Curso de Preparación para el Exámen”
+
+### Frencuencias absolutas
+
+```{r}
+tfrecuencia_preparacion_examen <- table(StudentsPerformance$`test preparation course`)
+kable(tfrecuencia_preparacion_examen, caption = "Tabla de Frecuencia de los estudiantes según su curso de preparación para el exámen",col.names = c("Estudiantes según su curso de preparación para el exámen", "Frecuencia"),
+      digits = 1, format.args=list(decimal.mark=","))
+```
+
+### Diagrama de Barras
+
+```{r}
+ggplot(StudentsPerformance, aes(x=`test preparation course`, fill=`test preparation course`)) +  geom_bar( ) +  scale_fill_brewer(palette = "Set2") +
+  theme(legend.position="right")
+```
+
+En este gráfico de la variable “Estudiantes según su Curso de Preparación para el examen” podemos destacar que: 358 estudiantes están dentro de la variable “Completed”, por otro lado 642 estudiantes están dentro de las variables “none”, se deduce que la variable que predomina es “none”.
+
+### Gráfico pastel
+
+```{r}
+#COLUMNA SEGUN EL NIVEL DE PREPARACION DEL CURSO
+#Porcentaje de participación
+porcentaje_test <- StudentsPerformance %>% #Se usa esta variable para sacar los porcentajes
+  group_by(`test preparation course`) %>% 
+  count() %>% 
+  ungroup() %>% 
+  mutate(porcentaje = `n`/sum(`n`)*100)
+#Se usa ggplot para el grafico pastel
+ggplot(data = porcentaje_test,
+       aes(x = 1, y = porcentaje, fill = `test preparation course`))+
+  geom_bar(stat = "identity")+
+  geom_text(aes(label = paste0(round(porcentaje,1),"%")),
+            position = position_stack(vjust = .5))+
+  coord_polar(theta = "y")+
+  theme_void()+
+  labs(title = "Porcentaje según la preparacion del curso para el Test")
+```
+
+En esta representación gráfica podemos deducir que: el 64,2% de los estudiantes (variable “None”) no están preparados para el test, es decir que tienen más probabilidad de sacar una menor nota, sin embargo, hay un 35,8% (Variable “Completed”) de los estudiantes que, si están preparados, por ende, tienen más probabilidad de sacar una mayor nota.
+
+## Análisis Univariado de las variables cuantitativas
+
+### Variable cuantitativa “Notas de Escritura”
+
+### Tabla de Frecuencias
+
+```{r, warning=FALSE, message=FALSE}
+library("fdth")
+tfrecuencia_writing <- fdt(StudentsPerformance$`writing score`)
+tfrecuencia_writing
+```
+
+**Interpretación Frecuencia absoluta:**
+
+* 2 estudiantes tienen una nota entre 9.9 y 18.2
+* 3 estudiantes tienen una nota entre 18.2 y 26.5
+* 12 estudiantes tienen una nota entre 26.5 y 34.7
+* 45 estudiantes tienen una nota entre 34.7 y 43
+* 79 estudiantes tienen una nota entre 43 y 51.3
+* 140 estudiantes tienen una nota entre 51.3 y 59.6
+* 176 estudiantes tienen una nota entre 59.6 y 67.9
+* 240 estudiantes tienen una nota entre 67.9 y 76.2
+* 168 estudiantes tienen una nota entre 76.2 y 84.4
+* 87 estudiantes tienen una nota entre 84.4 y 92.7
+
+* 48 estudiantes tienen una nota entre 92.7 y 100
+
+**Interpretación Frecuencia Absoluta acumulada: **
+
+* 2 estudiantes tienen una nota menor a 18.2
+* 5 estudiantes tienen una nota menor a 26.5
+* 17 estudiantes tienen una nota menor a 34.7
+* 62 estudiantes tienen una nota menor a 43
+* 141 estudiantes tienen una nota menor a 51.3
+* 281 estudiantes tienen una nota menor a 59.6
+* 457 estudiantes tienen una nota menor a 67.9
+* 697 estudiantes tienen una nota menor a 76.2
+* 865 estudiantes tienen una nota menor a 84.4
+* 952 estudiantes tienen una nota menor a 92.7
+
+* 1000 estudiantes tienen una nota menor a 100
+
+**Interpretación Frecuencia relativa: **
+
+* 0.2% de los estudiantes tienen una nota entre 9.9 y 18.2
+* 0.3% de los estudiantes tienen una nota entre 18.2 y 26.5
+* 1.2% de los estudiantes tienen una nota entre 26.5 y 34.7
+* 4.5% de los estudiantes tienen una nota entre 34.7 y 43
+* 7.9% de los estudiantes tienen una nota entre 43 y 51.3
+* 14% de los estudiantes tienen una nota entre 51.3 y 59.6
+* 17.6% de los estudiantes tienen una nota entre 59.6 y 67.9
+* 24% de los estudiantes tienen una nota entre 67.9 y 76.2
+* 16.8% de los estudiantes tienen una nota entre 76.2 y 84.4
+* 8.7% de los estudiantes tienen una nota entre 84.4 y 92.7
+
+* 4.8% de los estudiantes tienen una nota entre 92.7 y 100
+
+**Interpretación Frecuencia relativa acumulada:**
+
+* 0.2% de los estudiantes tienen una nota menor a 18.2
+* 0.5% de los estudiantes tienen una nota menor a 26.5
+* 1.7% de los estudiantes tienen una nota menor a 34.7
+* 6.2% de los estudiantes tienen una nota menor a 43
+* 14.1% de los estudiantes tienen una nota menor a 51.3
+* 28.1% de los estudiantes tienen una nota menor a 59.6
+* 45.7% de los estudiantes tienen una nota menor a 67.9
+* 69.7% de los estudiantes tienen una nota menor a 76.2
+* 86.5% de los estudiantes tienen una nota menor a 84.4
+* 95.2% de los estudiantes tienen una nota menor a 92.7
+
+* 100% de los estudiantes tienen una nota menor a 100
+
+### Histograma
+
+```{r}
+plot(tfrecuencia_writing,type = "fh", col="lightblue", xlab = "Notas de Escritura", ylab = "Frecuencias", main = "Notas de Escritura")
+```
+
+Como se puede observar en la ilustración, la muestra tiene una mayor cantidad de estudiantes con estatura que se encuentra en el rango [76.2,84.4), y donde tiene una muestra con menor cantidad es en el rango [9.9,18.2) y [18.2,26.5) donde sus notas son las más bajas y está conformado por una cantidad menor de estudiantes.
+
+### Polígono de frecuencia
+
+```{r}
+plot(tfrecuencia_writing,type = "fp", col="brown", xlab = "Notas de Escritura", ylab = "Frecuencias", main = "Notas de Escritura")
+```
+
+En la ilustración se muestra, el rango de [9.90,18.2) donde existen solo 2 datos que representan el 0.2%, en el rango de [18.2,26.5) podemos observar que existen solo 3 datos que representan el 0.3%, esto significa que no se tomó una muestra grande respecto a este rango o podría ser que no existían más datos para mostrar, lo observamos que el gráfico va en aumente desde el rango [34.7,43.03) hasta llegar a su punto máximo donde se encuentra la mayor cantidad de datos en el rango [67.9,76.15) donde existen 240 estudiantes con esa nota y representa el 24% de los datos, luego de este rango el gráfico va de bajada hasta que llegar su último punto.
+
+### Gráfico de ojiva
+
+```{r}
+plot(tfrecuencia_writing,type = "cfpp", col="brown", xlab = "Notas de Escritura", ylab = "Frecuencias relativas en porcentaje", main = "Notas de Escritura")
+```
+
+Los datos de este gráfico se interpretan de la siguiente manera:
+
+* Primer punto: 0 estudiantes obtuvieron una nota menor de 9.90.
+* Segundo punto: 2 estudiantes obtuvieron una nota menor de 18.2.
+* Tercer punto: 5 estudiantes obtuvieron una nota menor de 26.46.
+* Cuarto punto: 17 estudiantes obtuvieron una nota menor de 34.7.
+* Quinto punto: 62 estudiantes obtuvieron una nota menor de 43.03.
+* Sexto punto: 141 estudiantes obtuvieron una nota menor de 51.3.
+* Séptimo punto: 281 estudiantes obtuvieron una nota menor de 59.59.
+* Octavo punto: 457 estudiantes obtuvieron una nota menor de 67.9.
+* Noveno punto: 697 estudiantes obtuvieron una nota menor de 76.15.
+* Décimo punto: 865 estudiantes obtuvieron una nota menor de 84.4.
+* Onceavo punto: 952 estudiantes obtuvieron una nota menor de 92.72.
+
+* Doceavo punto: 1000 estudiantes obtuvieron una nota menor a 100.
+
+### Gráfico del sesgo
+
+```{r}
+ggplot(data = StudentsPerformance,aes(x= StudentsPerformance$`writing score`))+
+  geom_histogram(bins = 10, fill = "lightgreen", color = "black")+
+  geom_freqpoly(bins = 10, color = "black")+
+  labs(title = "Gráfica del sesgo de las notas de Escritura")
+```
+
+Como se muestra en la ilustración, el coeficiente de asimetría de la variable notas de Escritura es de -0.280096, esta es la cantidad que no permite que el gráfico sea simétrico completamente, tiene un sesgo con cola hacia la izquierda debido a que el coeficiente de asimétrica es negativo.
+
+* La media de la variable Notas de Escritura es de 68.054, es decir que esta cantidad es el promedio de todos los datos dentro de la variable.
+* La mediana de la variable Notas de Escritura es de 69, es decir que es el dato central de todos los datos ordenados de la variable.
+* La moda de la variable Notas de Escritura es de 74, esto quiere decir que es la Nota de Escritura que más se repite entre todos los datos.
+* El rango intercuartílico de la variable Notas de Escritura es de 21.25, se puede interpretar como todos los datos que están más cerca de la mediana.
+* La varianza de la variable Notas de Escritura es de 230.908 es decir que es la dispersión o variabilidad de los datos de la variable Notas de Escritura.
+* La desviación estándar de la variable Notas de Escritura es de 15.1956, es decir representa que tan apartado esta de la media.
+
+* Coeficiente de variación de la variable Notas de Escritura es de 0.2232, se interpreta como la desviación estándar o típica es el 0.2232% con respecto a la media.
+
+### Cuantiles
+
+```{r}
+quantile(StudentsPerformance$`writing score`, prob=seq(0, 1, length = 101))
+```
+
+Como podemos observar en la tabla, en negrita están los deciles, y debajo de ellos están sus respectivos cuantiles, se procederá a hacer la respectiva interpretación, pero por Percentiles, siendo estos el percentil 10, 20,30,40,50,60,70,80,90 y 100:
+
+* Percentil 10: El 10 % de los estudiantes, obtiene una nota menos de 48.
+* Percentil 20: El 20 % de los estudiantes, obtiene una nota menos de 54.
+* Percentil 30: El 30 % de los estudiantes, obtiene una nota menos de 60.
+* Percentil 40: El 40 % de los estudiantes, obtiene una nota menos de 65.
+* Percentil 50: El 50 % de los estudiantes, obtiene una nota menos de 69.
+* Percentil 60: El 60 % de los estudiantes, obtiene una nota menos de 73.
+* Percentil 70: El 70 % de los estudiantes, obtiene una nota menos de 77.
+* Percentil 80: El 80 % de los estudiantes, obtiene una nota menos de 81.
+* Percentil 90: El 90 % de los estudiantes, obtiene una nota menos de 87.
+
+* Percentil 100: El 10 % de los estudiantes, obtiene una nota menos de 100.
+
+### Diagrama de Cajas
+
+```{r}
+ggplot(data = StudentsPerformance, aes(x = StudentsPerformance$`writing score`))+
+  geom_boxplot()+
+  labs(title = "Diagrama de Cajas de las Notas de Escritura")
+```
+
+Podemos observar en el diagrama de la caja los siguientes aciertos:
+El rango es de 90.1 que es la resta entre los extremos, la mediana es de 69 y por último, los valores extremos o aberrantes son 10,22,19,15,23, que son los puntos que están de lado izquierdo del gráfico, estos son los valores que están fuera del límite inferior, donde su límite inferior es de 25 y su límite superior es de 100.
+
+### Variable cuantitativa “Notas de Lectura”
+
+### Tabla de Frecuencias
+
+```{r}
+tfrecuencia_reading <- fdt(StudentsPerformance$`reading score`)
+tfrecuencia_reading
+```
+
+**Interpretación Frecuencia absoluta:**
+
+* 4 estudiantes tienen una nota entre 16.8 y 24.5
+* 7 estudiantes tienen una nota entre 24.5 y 32.1
+* 15 estudiantes tienen una nota entre 32.1 y 39.8
+* 44 estudiantes tienen una nota entre 39.8 y 47.4
+* 106 estudiantes tienen una nota entre 47.4 y 55.1
+* 145 estudiantes tienen una nota entre 55.1 y 62.7
+* 192 estudiantes tienen una nota entre 62.7 y 70.4
+* 219 estudiantes tienen una nota entre 70.4y 78
+* 136 estudiantes tienen una nota entre 78 y 85.7
+* 92 estudiantes tienen una nota entre 85.7 y 93.3
+
+* 40 estudiantes tienen una nota entre 93.3 y 100
+
+**Interpretación Frecuencia Absoluta acumulada:**
+
+* 4 estudiantes tienen una nota menor a 24.5
+* 11 estudiantes tienen una nota menor a 32.1
+* 26 estudiantes tienen una nota menor a 39.8
+* 70 estudiantes tienen una nota menor a 47.4
+* 176 estudiantes tienen una nota menor a 55.1
+* 321 estudiantes tienen una nota menor a 62.7
+* 513 estudiantes tienen una nota menor a 70.4
+* 732 estudiantes tienen una nota menor a 78
+* 868 estudiantes tienen una nota menor a 85.7
+* 960 estudiantes tienen una nota menor a 93.3
+
+* 1000 estudiantes tienen una nota menor a 100
+
+**Interpretación Frecuencia relativa:**
+
+* 0.4% de los estudiantes tienen una nota entre 16.8 y 24.5
+* 0.7% de los estudiantes tienen una nota entre 24.5 y 32.1
+* 1.5% de los estudiantes tienen una nota entre 32.1 y 39.8
+* 4.4% de los estudiantes tienen una nota entre 39.8 y 47.4
+* 10.6% de los estudiantes tienen una nota entre 47.4 y 55.1
+* 14.5% de los estudiantes tienen una nota entre 55.1 y 62.7
+* 19.2% de los estudiantes tienen una nota entre 62.7 y 70.4
+* 21.9% de los estudiantes tienen una nota entre 70.4y 78
+* 13.2% de los estudiantes tienen una nota entre 78 y 85.7
+* 9.2% de los estudiantes tienen una nota entre 85.7 y 93.3
+
+* 4.0% de los estudiantes tienen una nota entre 93.3 y 100
+
+**Interpretación Frecuencia relativa acumulada:**
+
+* 0.4% de los estudiantes tienen una nota menor a 24.5
+* 1.1% de los estudiantes tienen una nota menor a 32.1
+* 2.6% de los estudiantes tienen una nota menor a 39.8
+* 7.0% de los estudiantes tienen una nota menor a 47.4
+* 17.6% de los estudiantes tienen una nota menor a 55.1
+* 32.1% de los estudiantes tienen una nota menor a 62.7
+* 51.3% de los estudiantes tienen una nota menor a 70.4
+* 73.2% de los estudiantes tienen una nota menor a 78
+* 86.8% de los estudiantes tienen una nota menor a 85.7
+* 96.0% de los estudiantes tienen una nota menor a 93.3
+
+* 100% de los estudiantes tienen una nota menor a 100
+
+
+### Histograma 
+
+```{r}
+plot(tfrecuencia_reading,type = "fh", col="lightgreen", xlab = "Notas de Lectura", ylab = "Frecuencias", main = "Notas de Lectura")
+```
+
+Como se observa la ilustración, la mayor cantidad de datos (donde los estudiantes tienen mayores notas en la variable Notas de Lectura) está dentro del rango de [70.4,78.04), por otro lado menor cantidad de datos (donde los estudiantes tienen menores notas en la variable Notas de Lectura) está en el rango [16.83,24.5) esto quiere decir que en este rango se escogió menos cantidad de muestra o simplemente no existieron más datos que añadir, en tal caso este gráfico nos sirve para tener una idea de cuanta cantidad de datos hay dentro de cada rango y como están distribuido en estos.
+
+### Polígono de frecuencias
+
+```{r}
+plot(tfrecuencia_reading,type = "fp", col="red", xlab = "Notas de Lectura", ylab = "Frecuencias", main = "Notas de Lectura")
+```
+
+En la ilustración se muestra el rango [16.83,24.5) donde solo existen 4 estudiantes que representan el 0.4%, en el rango [24.5,32.13) solo hay 7 estudiantes y representan el 0.7%, como se puede observar desde el rango [39.8,47.44) es donde el gráfico empieza a crecer, en este rango hay 44 estudiantes que representan 4.4%, llega a su tope límite de crecimiento entre el rango [70.4,78.04) con una cantidad de 219 estudiantes que representa el 21.9% de los datos, desde ese punto el gráfico empieza a descaer hasta el rango [93.3,100) donde su cantidad es de 40 estudiantes y representan el 4% de los datos.
+
+### Gráfico de Ojiva
+
+```{r}
+plot(tfrecuencia_reading,type = "cfpp", col="red", xlab = "Notas de Lectura", ylab = "Frecuencias relativas en porcentaje", main = "Notas de Lectura")
+
+```
+
+Los datos de este gráfico se interpretan de la siguiente manera:
+
+* Primer punto: 0 estudiantes obtuvieron una menor nota de 16.8
+* Segundo punto: 4 estudiantes obtuvieron una nota menor de 24.5
+* Tercer punto: 11 estudiantes obtuvieron una nota menor de 32.1.
+* Cuarto punto: 26 estudiantes obtuvieron una nota menor de 39.8.
+* Quinto punto: 70 estudiantes obtuvieron una nota menor de 47.4.
+* Sexto punto: 176 estudiantes obtuvieron una nota menor de 55.1.
+* Séptimo punto: 321 estudiantes obtuvieron una nota menor de 62.7.
+* Octavo punto: 513 estudiantes obtuvieron una nota menor de 70.4.
+* Noveno punto: 732 estudiantes obtuvieron una nota menor de 78.
+* Décimo punto: 868 estudiantes obtuvieron una nota menor de 85.7.
+* Onceavo punto: 960 estudiantes obtuvieron una nota menor de 93.3.
+
+* Doceavo punto: 1000 estudiantes obtuvieron una nota menor a 100.
+
+### Gráfico de Sesgo
+
+```{r}
+ggplot(data = StudentsPerformance,aes(x= StudentsPerformance$`reading score`))+
+  geom_histogram(bins = 10, fill = "lightyellow", color = "black")+
+  geom_freqpoly(bins = 10, color = "black")+
+  labs(title = "Gráfica del Sesgo de las notas de Lectura")
+```
+
+Como observamos en el gráfico del sesgo, podemos notar que no es simétrico y además tiene un coeficiente de asimetría de -0.2587157, esta cantidad nos indica porque no es simétrico, por otro lado, se puede destacar que tiene un sesgo con cola hacia la izquierda debido a que el coeficiente de asimetría es negativo.
+
+* La media de la variable Notas de Lectura es de 69.169, esto significa que es el promedio de todas las calificaciones de los estudiantes contenidos por la variable.
+* La mediana de la variable Notas de Lectura es de 70, este es el valor central de todos los datos ordenados ya sea ascendente o descendentemente.
+* La moda de la variable Notas de Lectura es de 72, es decir que es la calificación que más se repite entre la muestra de 1000 estudiantes.
+* El rango intercuartílico de la variable Notas de Lectura es de 20, se puede interpretar como todos los datos que están más cerca de la mediana.
+* La varianza de la variable Notas de Lectura es de 213.1656 es decir que es la dispersión o variabilidad de los datos de la variable Notas de Lectura.
+* La desviación estándar de la variable Notas de Lectura es de 14.6001, es decir representa que tan apartado esta de la media.
+
+* Coeficiente de variación de la variable Notas de Lectura es de 0.2110, se interpreta como la desviación estándar o típica es el 0.2110 % con respecto a la media.
+
+### Cuantiles
+
+```{r}
+quantile(StudentsPerformance$`reading score`, prob=seq(0, 1, length = 101))
+```
+
+Como podemos observar en la tabla, en negrita están los deciles, y debajo de ellos están sus respectivos cuantiles, se procederá a hacer la respectiva interpretación, pero por Percentiles, siendo estos el percentil 10, 20,30,40,50,60,70,80,90 y 100:
+
+* Percentil 10: El 10 % de los estudiantes, obtiene una nota menos de 51.
+* Percentil 20: El 20 % de los estudiantes, obtiene una nota menos de 57.
+* Percentil 30: El 30 % de los estudiantes, obtiene una nota menos de 62.
+* Percentil 40: El 40 % de los estudiantes, obtiene una nota menos de 66.
+* Percentil 50: El 50 % de los estudiantes, obtiene una nota menos de 70.
+* Percentil 60: El 60 % de los estudiantes, obtiene una nota menos de 74.
+* Percentil 70: El 70 % de los estudiantes, obtiene una nota menos de 77.
+* Percentil 80: El 80 % de los estudiantes, obtiene una nota menos de 82.
+* Percentil 90: El 90 % de los estudiantes, obtiene una nota menos de 87.10.
+
+* Percentil 100: El 10 % de los estudiantes, obtiene una nota menos de 100.
+
+### Diagrama de Cajas
+
+```{r}
+ggplot(data = StudentsPerformance, aes(x = StudentsPerformance$`reading score`))+
+  geom_boxplot()+
+  labs(title = "Diagrama de Cajas de las Notas de Lectura")
+```
+
+Podemos observar en el diagrama de caja los siguientes aciertos:
+
+El rango es de 83.1 que es la resta entre los extremos, la mediana es de 69.169 y por último, los valores extremos o aberrantes son 17,26,28,23,24, que son los puntos que están de lado izquierdo del gráfico, estos son los valores que están fuera del límite inferior, donde su límite inferior es de 27 y su límite superior es de 100.
+
+### Variable cuantitativa “Notas de Matemática”
+
+```{r}
+tfrecuencia_math <- fdt(StudentsPerformance$`math score`)
+tfrecuencia_math
+```
+
+**Interpretación Frecuencia absoluta:**
+
+* 2 estudiantes tienen una nota entre 0 y 9.18
+* 1 estudiantes tienen una nota entre 9.18 y 18.4
+* 7 estudiantes tienen una nota entre 18.4 y 27.4
+* 19 estudiantes tienen una nota entre 27.4 y 36.7
+* 56 estudiantes tienen una nota entre 36.7 y 45.9
+* 154 estudiantes tienen una nota entre 45.9 y 55.1
+* 208 estudiantes tienen una nota entre 55.1 y 64.3
+* 233 estudiantes tienen una nota entre 64.3 y 73.5
+* 184 estudiantes tienen una nota entre 73.5 y 82.6
+* 95 estudiantes tienen una nota entre 82.6 y 91.8
+
+* 41 estudiantes tienen una nota entre 91.8 y 100
+
+**Interpretación Frecuencia Absoluta acumulada:**
+
+* 2 estudiantes tienen una nota menor a 18
+* 3 estudiantes tienen una nota menor a 18.4
+* 10 estudiantes tienen una nota menor a 27.4
+* 29 estudiantes tienen una nota menor a 36.4
+* 85 estudiantes tienen una nota menor a 45.9
+* 239 estudiantes tienen una nota menor a 55.1
+* 447 estudiantes tienen una nota menor a 64.3
+* 680 estudiantes tienen una nota menor a 73.5
+* 864 estudiantes tienen una nota menor a 82.6
+* 959 estudiantes tienen una nota menor a 91.8
+
+* 1000 estudiantes tienen una nota menor a 100
+
+**Interpretación Frecuencia relativa:**
+
+* 0.2% de los estudiantes tienen una nota entre 0 y 9.18
+* 0.1% de los estudiantes tienen una nota entre 9.18 y 18.4
+* 1.7% de los estudiantes tienen una nota entre 18.4 y 27.4
+* 1.9% de los estudiantes tienen una nota entre 27.4 y 36.7
+* 5.6% de los estudiantes tienen una nota entre 36.7 y 45.9
+* 15.4% de los estudiantes tienen una nota entre 45.9 y 55.1
+* 20.8% de los estudiantes tienen una nota entre 55.1 y 64.3
+* 23.3% de los estudiantes tienen una nota entre 64.3 y 73.5
+* 18.4% de los estudiantes tienen una nota entre 73.5 y 82.6
+* 9.5% de los estudiantes tienen una nota entre 82.6 y 91.8
+
+* 4.1% de los estudiantes tienen una nota entre 91.8 y 100
+
+**Interpretación Frecuencia relativa acumulada:**
+
+* 0.2% de los estudiantes tienen una nota menor a 18
+* 0.3% de los estudiantes tienen una nota menor a 18.5
+* 1% de los estudiantes tienen una nota menor a 27.4
+* 2.9% de los estudiantes tienen una nota menor a 36.7
+* 8.5% de los estudiantes tienen una nota menor a 45.9
+* 23.9% de los estudiantes tienen una nota menor a 55.1
+* 44.7% de los estudiantes tienen una nota menor a 64.3
+* 68.0% de los estudiantes tienen una nota menor a 73.5
+* 86.4% de los estudiantes tienen una nota menor a 82.6
+* 95.9% de los estudiantes tienen una nota menor a 91.8
+
+* 100% de los estudiantes tienen una nota menor a 100
+
+### Histograma
+
+```{r}
+plot(tfrecuencia_math, type = "fh", col="lightyellow", xlab = "Notas de Matemática", ylab = "Frecuencias", main = "Notas de Matemática")
+```
+
+Como se observa la ilustración, la mayor cantidad de datos (donde los estudiantes tienen mayores notas en la variable Notas de matemática) está dentro del rango de [64.3,73.45), por otro lado menor cantidad de datos (donde los estudiantes tienen menores notas en la variable Notas de Matemática) está en el rango [0,9.18) esto quiere decir que en este rango se escogió menos cantidad de muestra o simplemente no existieron más datos que añadir, en tal caso este gráfico nos sirve para tener una idea de cuanta cantidad de datos hay dentro de cada rango y como están distribuido en estos
+
+### Polígono de Frecuencias
+
+```{r}
+plot(tfrecuencia_math, type = "fp", col="blue", xlab = "Notas de Matemática", ylab = "Frecuencias", main = "Notas de Matemática")
+```
+
+En la ilustración se muestra el rango [0,9.18) donde solo existen 2 estudiantes que representan el 0.2%, en el rango [9.18,18.4) solo hay 1 estudiante y representa el 0.1%, como se puede observar desde el rango [36.7,45.9) es donde el gráfico empieza a crecer, en este rango hay 56 estudiantes que representan 5.6%, llega a su tope límite de crecimiento entre el rango [64.3,73.45) con una cantidad de 233 estudiantes que representa el 23.2% de los datos, desde ese punto el gráfico empieza a descaer hasta el rango [91.8,100) donde su cantidad es de 41 estudiantes y representan el 4.1% de los datos.
+
+### Gráfico de Ojivas
+
+```{r}
+plot(tfrecuencia_math, type = "cfpp", col="blue", xlab = "Notas de Matemática", ylab = "Frecuencias relativas en porcentaje", main = "Notas de Matemática")
+```
+
+Los datos de este gráfico se interpretan de la siguiente manera:
+
+* Primer punto: 0 estudiantes obtuvieron una menor nota de 0.
+* Segundo punto: 2 estudiantes obtuvieron una nota menor de 9.18.
+* Tercer punto: 3 estudiantes obtuvieron una nota menor de 18.4.
+* Cuarto punto: 10 estudiantes obtuvieron una nota menor de 27.4.
+* Quinto punto: 29 estudiantes obtuvieron una nota menor de 36.7.
+* Sexto punto: 85 estudiantes obtuvieron una nota menor de 45.9.
+* Séptimo punto: 239 estudiantes obtuvieron una nota menor de 55.1.
+* Octavo punto: 447 estudiantes obtuvieron una nota menor de 64.3.
+* Noveno punto: 680 estudiantes obtuvieron una nota menor de 73.5.
+* Décimo punto: 864 estudiantes obtuvieron una nota menor de 82.6.
+* Onceavo punto: 959 estudiantes obtuvieron una nota menor de 91.8.
+
+* Doceavo punto: 1000 estudiantes obtuvieron una nota menor a 100.
+
+### Gráfico de Sesgo
+
+```{r}
+ggplot(data = StudentsPerformance,aes(x= StudentsPerformance$`math score`))+
+  geom_histogram(bins = 10, fill = "purple", color = "black")+
+  geom_freqpoly(bins = 10, color = "black")+
+  labs(title = "Gráfica del Sesgo de las notas de Matemática")
+```
+
+Como observamos en el gráfico del sesgo, podemos notar que no es simétrico y además tiene un coeficiente de asimetría de -0.2785166, esta cantidad nos indica porque no es simétrico, por otro lado, se puede destacar que tiene un sesgo con cola hacia la izquierda debido a que el coeficiente de asimetría es negativo.
+
+* La media de la variable Notas de matemática es de 66.089, esto significa que es el promedio de todas las calificaciones de los estudiantes contenidos por la variable.
+* La mediana de la variable Notas de matemática es de 66, este es el valor central de todos los datos ordenados ya sea ascendente o descendentemente.
+* La moda de la variable Notas de matemática es de 65, es decir que es la calificación que más se repite entre la muestra de 1000 estudiantes.
+* El rango intercuartílico de la variable Notas de matemática es de 20, se puede interpretar como todos los datos que están más cerca de la mediana.
+* La varianza de la variable Notas de matemática es de 229.919 es decir que es la dispersión o variabilidad de los datos de la variable Notas de matemática.
+* La desviación estándar de la variable Notas de Lectura es de 15.16308, es decir representa que tan apartado esta de la media.
+
+* Coeficiente de variación de la variable Notas de matemática es de 0.2294342, se interpreta como la desviación estándar o típica es el 0.2294343 % con respecto a la media.
+
+### Cuantiles
+
+```{r}
+quantile(StudentsPerformance$`math score`, prob=seq(0, 1, length = 101))
+```
+
+Como podemos observar en la tabla, en negrita están los deciles, y debajo de ellos están sus respectivos cuantiles, se procederá a hacer la respectiva interpretación, pero por Percentiles, siendo estos el percentil 10, 20,30,40,50,60,70,80,90 y 100:
+
+* Percentil 10: El 10 % de los estudiantes, obtiene una nota menos de 47.
+* Percentil 20: El 20 % de los estudiantes, obtiene una nota menos de 53.
+* Percentil 30: El 30 % de los estudiantes, obtiene una nota menos de 59.
+* Percentil 40: El 40 % de los estudiantes, obtiene una nota menos de 62.
+* Percentil 50: El 50 % de los estudiantes, obtiene una nota menos de 66.
+* Percentil 60: El 60 % de los estudiantes, obtiene una nota menos de 70.
+* Percentil 70: El 70 % de los estudiantes, obtiene una nota menos de 74.
+* Percentil 80: El 80 % de los estudiantes, obtiene una nota menos de 79.
+* Percentil 90: El 90 % de los estudiantes, obtiene una nota menos de 86.
+
+* Percentil 100: El 10 % de los estudiantes, obtiene una nota menos de 100.
+
+### Diagrama de Cajas
+
+```{r}
+ggplot(data = StudentsPerformance, aes(x = StudentsPerformance$`math score`))+
+  geom_boxplot()+
+  labs(title = "Diagrama de Cajas de las Notas de Matemáticas")
+```
+
+Podemos observar en el diagrama de caja los siguientes aciertos:
+
+El rango es de 100 que es la resta entre los extremos, la mediana es de 66 y, por último, los valores extremos o aberrantes son 18,0,22,24,26,19,23,8, que son los puntos que están de lado izquierdo del gráfico, estos son los valores que están fuera del límite inferior, donde su límite inferior es de 27 y su límite superior es de 100.
+
+## Análisis Bivariado
+
+### Matriz de Correlacion
+
+```{r, warning=FALSE, message=FALSE}
+library(psych)
+cor.plot(StudentsPerformance[,c('math score','reading score','writing score')], numbers = TRUE)
+```
+
+El desempeño de los estudiantes posee una correlación fuerte y positiva entre los exámenes de escritura y lectura, mientras que la correlación se debilita cuando correlacionamos estos dos últimos con el examen de matemáticas, es decir, es más probable que un estudiante que obtuvo una calificación alta en escritura también obtenga una calificación alta en lectura en comparación a que un estudiante que haya obtenido una calificación alta en matemática obtenga una calificación alta en lectura.
+
+## Conclusiones
+
+Durante el proyecto, pudimos notar la importancia de todos los factores que pueden afectar al desempeño del estudiante, es decir; las variables cualitativas son un factor muy importante para poder determinar la razón de los resultados. Las materias de las que se habla en el proyecto son las materias más básicas, en un análisis más profundo podríamos inclusive asociar los gustos con el rendimiento académico, la metodología de enseñanza también es un factor importante en estos casos.
+
+Para las variables cualitativas tenemos que, 226 estudiantes poseen “some college” por nivel de educación parental, 645 estudiantes con un lunch standard y por último 518 estudiantes de género femenino.
+
+La interpretación de los datos nos dio como resultado en las variables cuantitativas lo siguiente: 240 estudiantes tienen una nota entre 67.9 y 76.2 en la materia de escritura, posicionándose como el intervalo de notas con más frecuencias absolutas. 219 estudiantes tienen una nota entre 70.4 y 78 en la materia de lectura, obteniendo la mayor cantidad de frecuencias absolutas. Por último, 233 estudiantes tienen una nota entre 64.3 y 73.5 en la materia de matemáticas, siendo el intervalo con mayores frecuencias absolutas.
+
+Las modas se ubican dentro de los intervalos con mayor frecuencia, podemos relacionar que las 3 materias poseen modas similares.
+
+Para terminar, el proyecto nos animó a aprender más sobre la estadística descriptiva y la interpretación de la misma. Es importante saber obtener una buena interpretación para una buena exposición.
+
+## Recomendaciones
+
+Nos hubiese gustado tener más variables cuantitativas, en nuestro caso hicimos el uso de 3 variables de este tipo, hablaban sobre diferentes materias. No podemos determinar el desempeño de un estudiante con tan solo 3 materias, debido a que no necesariamente pueden ser del agrado de los alumnos. Quizás en otras ramas de la educación se podría obtener un mejor resultado, sabemos que existen diferentes tipos de inteligencias que podrían haber obtenido mejores resultados, bien sea el área del arte, deporte, idiomas, ciencias de la vida entre muchas otras.
+
+Ahora bien, las variables cualitativas, sentimos que hicieron falta otras circunstancias para poder determinar el desempeño, es decir; que es lo que los alumnos desean y los que les agrada realizar. Permitiéndonos así relacionar e interpretar mejor los resultados cuantitativos.
+
+## Bibliografía
+
+* andresj90. (24 de Noviembre de 2018). Wordpress. Obtenido de https://statutorial534846024.wordpress.com/2018/11/24/cuartil-en-r/
+* Monsalvo, M. (16 de Agosto de 2016). R-es. Obtenido de https://stat.ethz.ch/pipermail/r-help-es/2016-August/010570.html
+* Schloerke, B. (15 de Junio de 2019). R-Charts. Obtenido de https://r-charts.com/es/correlacion/ggpairs/
+* Seshapanpu, J. (15 de Octubre de 2019). Kaggle. Obtenido de https://www.kaggle.com/spscientist/students-performance-in-exams
+
+* Suárez, V. (9 de Febrero de 2020). Betaeconomia. Obtenido de http://betaeconomia.blogspot.com/2020/02/analisis-de-correlacion-en-r.html
