@@ -1,0 +1,358 @@
+#Importacion----
+#Primero se instala el paquete readr para poder leer nuestro archivo csv
+#install.packages("readr")
+
+library(readr) #Se importa la librería anteriormente instalada
+
+
+#Lectura de Data------
+
+#Se importan los datos del CSV
+StudentsPerformance <- read_csv("~/ESPOL/3ER/Estadística 1/Proyecto Final/Data/StudentsPerformance.csv")
+
+
+View(StudentsPerformance) #Se muestra visualmente nuestro Archivo CSV
+
+str(StudentsPerformance) #Esto nos dice que es un data frame
+
+#VARIABLES CUALITATIVAS----
+
+#DIAGRAMA DE BARRAS
+#Columna del Genero
+table_genero <- table(StudentsPerformance$gender) #Creando la tabla
+barplot(table_genero, main = "Estudiantes por Género", xlab = "Género", ylab = "Cantidad") #diagrama de barras
+
+#Columna de la Raza/Etnia
+table_ethnicity <- table(StudentsPerformance$`race/ethnicity`) #Creando la tabla
+barplot(table_ethnicity, main = "Estudiantes por Etnia", xlab = "Raza/Etnia", ylab = "Cantidad") #Diagrama de barras
+
+#Columna del nivel de educacion parental
+table_parentedu <- table(StudentsPerformance$`parental level of education`) #Creando la tabla
+barplot(table_parentedu, main = "Estudiantes por Nivel de Eduación Parental", xlab = "Nivel De Educación Parental", ylab = "Cantidad") #Diagrama de barras
+
+#Columna del lunch
+table_lunch <- table(StudentsPerformance$lunch) #Creando la tabla
+barplot(table_lunch, main = "Estudiantes por Lunch", xlab = "Lunch", ylab = "Cantidad") #Diagrama de barras
+
+#Columna del Estado de preparacion del curso
+table_test<- table(StudentsPerformance$`test preparation course`) #Creando la tabla
+barplot(table_test, main = "Estudiantes por Curso de Preparacion para el Examen", xlab = "Estado", ylab = "Cantidad") #Diagrama de barras
+
+
+#DIAGRAMAS DE PASTEL
+library(tidyverse)#Se importa la librería tidyverse
+
+#COLUMNA Genero
+#Porcentaje de participación
+porcentaje_genero <- StudentsPerformance %>% #Se usa esta variable para sacar los porcentajes
+  group_by(gender) %>% 
+  count() %>% 
+  ungroup() %>% 
+  mutate(porcentaje = `n`/sum(`n`)*100)
+#Se usa ggplot para el grafico pastel
+ggplot(data = porcentaje_genero,
+       aes(x = 1, y = porcentaje, fill = gender))+
+  geom_bar(stat = "identity")+
+  geom_text(aes(label = paste0(round(porcentaje,1),"%")),
+            position = position_stack(vjust = .5))+
+  coord_polar(theta = "y")+
+  theme_void()+
+  labs(title = "Porcentaje según el Género")+
+  theme(plot.title = element_text(hjust = 0.5 ))
+
+
+#Columna Raza/Etnia
+#Porcentaje de Participacion
+porcentaje_raza2 <-  StudentsPerformance %>% 
+  group_by(`race/ethnicity`) %>% 
+  summarise(Frec = n()) %>% 
+  mutate(FrecRel = Frec*100/sum(Frec))
+#Se usa ggplot para el grafico pastel
+porcentaje_raza2 %>% 
+  ggplot(aes(x='',y=FrecRel, fill= `race/ethnicity`))+
+  geom_bar(stat='identity')+
+  geom_text(aes(label = paste0(round(FrecRel,1),"%")),
+            position = position_stack(vjust = .5))+
+  coord_polar('y',start=0)+
+  theme_void()+
+  labs(title = "Porcentaje según la Raza/Etnia")+
+  theme(plot.title = element_text(hjust = 0.5 ))
+
+
+#Columna Nivel parental de Educacion
+#Porcentaje de participación
+porcentaje_parental <- StudentsPerformance %>% #Se usa esta variable para sacar los porcentajes
+  group_by(`parental level of education`) %>% 
+  count() %>% 
+  ungroup() %>% 
+  mutate(porcentaje = `n`/sum(`n`)*100)
+#Se usa ggplot para el grafico pastel
+ggplot(data = porcentaje_parental,
+       aes(x = 1, y = porcentaje, fill = `parental level of education`))+
+  geom_bar(stat = "identity")+
+  geom_text(aes(label = paste0(round(porcentaje,1),"%")),
+            position = position_stack(vjust = .5))+
+  coord_polar(theta = "y")+
+  theme_void()+
+  labs(title = "Porcentaje según el Nivel De Eduacion Parental")+
+  theme(plot.title = element_text(hjust = 0.5 ))
+
+
+#COLUMNA DEL LUNCH
+#Porcentaje de participación
+porcentaje_lunch <- StudentsPerformance %>% #Se usa esta variable para sacar los porcentajes
+  group_by(lunch) %>% 
+  count() %>% 
+  ungroup() %>% 
+  mutate(porcentaje = `n`/sum(`n`)*100)
+#Se usa ggplot para el grafico pastel
+ggplot(data = porcentaje_lunch,
+       aes(x = 1, y = porcentaje, fill =lunch))+
+  geom_bar(stat = "identity")+
+  geom_text(aes(label = paste0(round(porcentaje,1),"%")),
+            position = position_stack(vjust = .5))+
+  coord_polar(theta = "y")+
+  theme_void()+
+  labs(title = "Porcentaje según el Lunch")
+
+#COLUMNA SEGUN EL NIVEL DE PREPARACION DEL CURSO
+#Porcentaje de participación
+porcentaje_test <- StudentsPerformance %>% #Se usa esta variable para sacar los porcentajes
+  group_by(`test preparation course`) %>% 
+  count() %>% 
+  ungroup() %>% 
+  mutate(porcentaje = `n`/sum(`n`)*100)
+#Se usa ggplot para el grafico pastel
+ggplot(data = porcentaje_test,
+       aes(x = 1, y = porcentaje, fill = `test preparation course`))+
+  geom_bar(stat = "identity")+
+  geom_text(aes(label = paste0(round(porcentaje,1),"%")),
+            position = position_stack(vjust = .5))+
+  coord_polar(theta = "y")+
+  theme_void()+
+  labs(title = "Porcentaje según la preparacion del curso para el Test")
+
+
+#TABLAS CON FRECUENCIAS ABSOLUTAS
+
+#Tabla de frecuencia del Genero
+tfrecuencia_genero <- table(StudentsPerformance$gender)
+tfrecuencia_genero
+
+#Tabla de Frecuencia de la raza/etnia
+tfrecuencia_raza <- table(StudentsPerformance$`race/ethnicity`)
+tfrecuencia_raza
+
+#Tabla de frecuencia según el nivel de educacion parental
+tfrecuencia_nivelparental <- table(StudentsPerformance$`parental level of education`)
+tfrecuencia_nivelparental
+
+#Tabla de frecuencia según el nivel de lunch
+tfrecuencia_lunch <- table(StudentsPerformance$lunch)
+tfrecuencia_lunch
+
+#Tabla de frecuencia según el nivel del curso de preparación para el examen
+tfrecuencia_preparacion_examen <- table(StudentsPerformance$`test preparation course`)
+tfrecuencia_preparacion_examen
+
+
+#VARIABLES CUANTITATIVAS----
+
+#TABLAS DE FRECUENCIA
+library("fdth") #Se importa la libreria fdth
+
+#Tabla de Frecuencia de la calificacion en Matemáticas
+tfrecuencia_math <- fdt(StudentsPerformance$`math score`)
+tfrecuencia_math
+
+#Tabla de Frecuencia de la calificacion en Lectura
+tfrecuencia_reading <- fdt(StudentsPerformance$`reading score`)
+tfrecuencia_reading
+
+#Tabla de Frecuencia de la calificacion en Matemáticas
+tfrecuencia_writing <- fdt(StudentsPerformance$`writing score`)
+tfrecuencia_writing
+
+
+#HISTOGRAMAS
+
+#Histograma de las notas de Matemática
+plot(tfrecuencia_math, type = "fh", col="lightyellow", xlab = "Notas de Matemática", ylab = "Frecuencias", main = "Notas de Matemática")
+
+#Histograma de las notas de Lectura
+plot(tfrecuencia_reading,type = "fh", col="lightgreen", xlab = "Notas de Lectura", ylab = "Frecuencias", main = "Notas de Lectura")
+
+#Histograma de las notas de Escritura
+plot(tfrecuencia_writing,type = "fh", col="lightblue", xlab = "Notas de Escritura", ylab = "Frecuencias", main = "Notas de Escritura")
+
+
+#POLIGONOS DE FRECUENCIA
+
+#Poligono de frecuencia de las notas de Matemática
+plot(tfrecuencia_math, type = "fp", col="blue", xlab = "Notas de Matemática", ylab = "Frecuencias", main = "Notas de Matemática")
+
+#Poligono de frecuencia de las notas de Lectura
+plot(tfrecuencia_reading,type = "fp", col="red", xlab = "Notas de Lectura", ylab = "Frecuencias", main = "Notas de Lectura")
+
+#Poligono de frecuencia de las notas de Escritura
+plot(tfrecuencia_writing,type = "fp", col="brown", xlab = "Notas de Escritura", ylab = "Frecuencias", main = "Notas de Escritura")
+
+
+#OJIVAS
+
+#Ojivas de las notas de Matemática
+plot(tfrecuencia_math, type = "cfpp", col="blue", xlab = "Notas de Matemática", ylab = "Frecuencias relativas en porcentaje", main = "Notas de Matemática")
+
+#Ojivas en las notas de Lectura
+plot(tfrecuencia_reading,type = "cfpp", col="red", xlab = "Notas de Lectura", ylab = "Frecuencias relativas en porcentaje", main = "Notas de Lectura")
+
+#Ojivas en las notas de Escritura
+plot(tfrecuencia_writing,type = "cfpp", col="brown", xlab = "Notas de Escritura", ylab = "Frecuencias relativas en porcentaje", main = "Notas de Escritura")
+
+
+#MEDIDAS DE FORMA: SESGO
+
+install.packages("moments") #Se instala la libreria para calcular el coeficiente de asimetria
+library(moments) #Se hace un llamado a la libreria
+
+#Sesgo de las Notas de Matemáticas
+ggplot(data = StudentsPerformance,aes(x= StudentsPerformance$`math score`))+
+  geom_histogram(bins = 10, fill = "purple", color = "black")+
+  geom_freqpoly(bins = 10, color = "black")+
+  labs(title = "Gráfica del Sesgo de las notas de Matemática")
+#Coeficiente de Asimetria
+skewness(StudentsPerformance$`math score`)
+
+
+#Sesgo de las Notas de Lectura
+ggplot(data = StudentsPerformance,aes(x= StudentsPerformance$`reading score`))+
+  geom_histogram(bins = 10, fill = "lightyellow", color = "black")+
+  geom_freqpoly(bins = 10, color = "black")+
+  labs(title = "Gráfica del Sesgo de las notas de Lectura")
+#Coeficiente de Asimetria
+skewness(StudentsPerformance$`reading score`)
+
+#Sesgo de las Notas de Escritura
+ggplot(data = StudentsPerformance,aes(x= StudentsPerformance$`writing score`))+
+  geom_histogram(bins = 10, fill = "lightgreen", color = "black")+
+  geom_freqpoly(bins = 10, color = "black")+
+  labs(title = "Gráfica del sesgo de las notas de Escritura")
+#Coeficiente de Asimetria
+skewness(StudentsPerformance$`writing score`)
+
+
+#MEDIDAS DE TENDENCIA CENTRAL
+install.packages("modeest") #Libreria para obtener la moda
+
+#Notas de Matemática
+mean(StudentsPerformance$`math score`) #Media
+median(StudentsPerformance$`math score`) #Mediana
+mfv(StudentsPerformance$`math score`) #Moda
+
+#Notas de Lectura
+mean(StudentsPerformance$`reading score`) #Media
+median(StudentsPerformance$`reading score`) #Mediana
+mfv(StudentsPerformance$`reading score`) #Moda
+
+#Notas de Escritura
+mean(StudentsPerformance$`writing score`) #Media
+median(StudentsPerformance$`writing score`) #Mediana
+mfv(StudentsPerformance$`writing score`) #Moda
+
+#MEDIDAS DE DISPERSION
+
+install.packages("FinCal") #Se instala libreria para calcular el coeficiente de variacion
+library("FinCal") #Se llama a la libreria
+
+#Notas de Matemática
+
+#Rango Intercuartilico
+ri_matematicas <- quantile(StudentsPerformance$`math score`, probs = 0.75)-quantile(StudentsPerformance$`math score`, probs = 0.25)
+ri_matematicas
+
+#Varianza
+var(StudentsPerformance$`math score`)
+
+#Desviacion Estandar
+sd(StudentsPerformance$`math score`)
+
+#Coeficiente de variacion
+coefficient.variation(sd=sd(StudentsPerformance$`math score`), avg = mean(StudentsPerformance$`math score`))
+
+
+#Notas de Lectura
+
+#Rango Intercuartilico
+ri_lectura <- quantile(StudentsPerformance$`reading score`, probs = 0.75)-quantile(StudentsPerformance$`reading score`, probs = 0.25)
+ri_lectura
+
+#Varianza
+var(StudentsPerformance$`reading score`)
+
+#Desviacion Estandar
+sd(StudentsPerformance$`reading score`)
+
+#Coeficiente de variacion
+coefficient.variation(sd=sd(StudentsPerformance$`reading score`), avg = mean(StudentsPerformance$`reading score`))
+
+
+#Notas de Escritura
+
+#Rango Intercuartilico
+ri_escritura <- quantile(StudentsPerformance$`writing score`, probs = 0.75)-quantile(StudentsPerformance$`writing score`, probs = 0.25)
+ri_escritura
+
+#Varianza
+var(StudentsPerformance$`writing score`)
+
+#Desviacion Estandar
+sd(StudentsPerformance$`writing score`)
+
+#Coeficiente de variacion
+coefficient.variation(sd=sd(StudentsPerformance$`writing score`), avg = mean(StudentsPerformance$`writing score`))
+
+#CUANTILES
+
+#Notas de Matemática
+quantile(StudentsPerformance$`math score`, prob=seq(0, 1, length = 101))
+
+#Notas de Lectura
+quantile(StudentsPerformance$`reading score`, prob=seq(0, 1, length = 101))
+
+#Notas de Escritura
+quantile(StudentsPerformance$`writing score`, prob=seq(0, 1, length = 101))
+
+
+#DIAGRAMAS DE CAJA Y VALORES ABERRANTES
+
+#Notas de Matemáticas
+ggplot(data = StudentsPerformance, aes(x = StudentsPerformance$`math score`))+
+  geom_boxplot()+
+  labs(title = "Diagrama de Cajas de las Notas de Matemáticas")
+#Valores aberrantes 
+boxplot.stats(StudentsPerformance$`math score`)$out
+
+#Notas de Lectura
+ggplot(data = StudentsPerformance, aes(x = StudentsPerformance$`reading score`))+
+  geom_boxplot()+
+  labs(title = "Diagrama de Cajas de las Notas de Lectura")
+#Valores aberrantes 
+boxplot.stats(StudentsPerformance$`reading score`)$out
+
+#Notas de Escritura
+ggplot(data = StudentsPerformance, aes(x = StudentsPerformance$`writing score`))+
+  geom_boxplot()+
+  labs(title = "Diagrama de Cajas de las Notas de Escritura")
+#Valores aberrantes 
+boxplot.stats(StudentsPerformance$`writing score`)$out
+
+
+#ANALISIS BIVARIADOS----
+
+#MATRIZ DE VARIANZA Y COVARIANZA
+matriz_va_cova <- cov(StudentsPerformance[,c('math score','reading score','writing score')])
+matriz_va_cova
+#MATRIZ DE CORRELACION
+round(cor(StudentsPerformance[,c('math score','reading score','writing score')]),2) 
+
+
